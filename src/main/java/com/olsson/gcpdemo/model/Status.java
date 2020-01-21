@@ -4,7 +4,7 @@ import lombok.Getter;
 
 public enum Status {
 
-    ORDERED("Ordered"),
+    CONFIRMED("Confirmed"),
     HANDLING("Handling"),
     SHIPPED("Shipped"),
     DELIVERD("Delivered");

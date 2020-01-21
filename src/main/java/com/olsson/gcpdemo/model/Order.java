@@ -12,8 +12,8 @@ public class Order {
 
     @DocumentId
     private long id;
+    private long userId;
     private List<Product> cart;
-    private String user;
     private Status status;
 
 }
