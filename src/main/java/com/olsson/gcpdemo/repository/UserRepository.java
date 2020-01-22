@@ -6,6 +6,6 @@ import reactor.core.publisher.Mono;
 
 public interface UserRepository extends FirestoreReactiveRepository<User> {
 
-    Mono<User> findByIdentification(String identification);
+    Mono<User> findByIdentification(long identification);
 
 }

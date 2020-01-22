@@ -6,8 +6,8 @@ import com.olsson.gcpdemo.model.Order;
 import com.olsson.gcpdemo.model.Product;
 import com.olsson.gcpdemo.model.Status;
 
-import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class Converters {
@@ -18,10 +18,11 @@ public class Converters {
 
     public static Order convertOrder(OrderDto orderDto) {
         var order = new Order();
+        order.setId(UUID.randomUUID().toString());
         order.setUserId(orderDto.getUserId());
         order.setCart(convertProducts(orderDto.getCart()));
         order.setStatus(Status.CONFIRMED);
-        return new Order();
+        return order;
     }
 
     private static List<Product> convertProducts(List<ProductDto> productList) {
@@ -36,9 +37,9 @@ public class Converters {
         product.setDescription(productDto.getDescription());
         product.setUnit(productDto.getUnit());
         product.setAmount(productDto.getAmount());
-        product.setCost(new BigDecimal(productDto.getCost()));
-        product.setVat(new BigDecimal(productDto.getVat()));
-        return new Product();
+        product.setCost(productDto.getCost());
+        product.setVat(productDto.getVat());
+        return product;
     }
 
 }

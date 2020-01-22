@@ -12,20 +12,30 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class OrderService {
 
-    OrderRepository orderRepository;
+    private final OrderRepository orderRepository;
 
     public Mono<ServerResponse> create(Mono<OrderDto> orderDto) {
         return orderDto
                 .map(Converters::convertOrder)
-                .map(order -> orderRepository.save(order))
-                .then(ServerResponse.ok().build())
-                .onErrorResume(e -> ServerResponse.badRequest().bodyValue("Could not save order"));
+                .flatMap(orderRepository::save)
+                .flatMap(order -> ServerResponse.ok().bodyValue(order))
+                .onErrorResume(e -> ServerResponse.badRequest().bodyValue("Could not save order" + e));
+    }
+
+    public Mono<ServerResponse> findUserOrders(String id) {
+        return Mono.just(id)
+                .map(Long::parseLong)
+                .flatMapMany(orderRepository::findAllByUserId)
+                .collectList()
+                .flatMap(orders -> ServerResponse.ok().bodyValue(orders))
+                .onErrorResume(e -> ServerResponse.badRequest().bodyValue("Could not fetch orders: " + e))
+                .switchIfEmpty(ServerResponse.ok().build());
     }
 
     public Mono<ServerResponse> remove(String id) {
         return orderRepository.deleteById(id)
                 .then(ServerResponse.ok().build())
-                .onErrorResume(e -> ServerResponse.badRequest().bodyValue("Could not delete order"));
+                .onErrorResume(e -> ServerResponse.badRequest().bodyValue("Could not delete order" + e));
     }
 
 }
